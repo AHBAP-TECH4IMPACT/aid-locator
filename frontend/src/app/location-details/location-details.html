@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>{{ listing()?.name }}</h2>
+<mat-dialog-content>
+    <div class="modal-header">
+      <span class="status">{{ listing()?.status }}</span>
+    </div>
+
+    <div class="modal-body">
+      <p><strong>Address:</strong> {{ listing()?.address }}</p>
+      <p><strong>Capacity:</strong> {{ listing()?.peopleCapacity }} people</p>
+      <p><strong>Updated:</strong> {{ listing()?.updatedAt | date: 'dd/MM/yyyy, HH:mm:ss' }}</p>
+
+      <h3>Available Services</h3>
+      @for(service of listing()?.availableServices; track service) {
+        <span class="service-tag">
+          {{ service }}
+        </span>
+      }
+
+      <h3>Description</h3>
+      <p>{{ listing()?.description }}</p>
+
+      <h3>Comments ({{ listing()?.comments?.length }})</h3>
+      @for(comment of listing()?.comments; track comment) {
+        <div>
+          <strong>{{ comment.author }}</strong> ({{ comment.date | date:'dd/MM/yyyy, HH:mm:ss' }}): 
+          <p>{{ comment.content }}</p>
+        </div>
+      }
+    </div>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+
+    <div>
+      <button (click)="closeModal()">Close</button>
+    </div>
+
+</mat-dialog-actions>
+
+
+<!-- 
+@if(listing()) {
+  
+} -->

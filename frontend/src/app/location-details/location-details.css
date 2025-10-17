@@ -1,0 +1,22 @@
+/* 
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.modal-header, .modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.service-tag {
+  display: inline-block;
+  background: #eee;
+  margin: 4px;
+  padding: 4px 8px;
+  border-radius: 8px;
+} */
