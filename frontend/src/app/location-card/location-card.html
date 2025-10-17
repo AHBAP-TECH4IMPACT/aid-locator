@@ -1,0 +1,41 @@
+<!-- location-card.component.html -->
+<article class="location-card">
+  <div class="card-header">
+    <div>
+      <h3>{{ listing.name }}</h3>
+      <p class="location-address">
+        <span class="icon">📍</span>
+        {{ listing.address }}
+      </p>
+    </div>
+    <span class="status-badge open">open</span>
+  </div>
+
+  <div class="card-body">
+    <h4>Available Services</h4>
+    <div class="services-list">
+      @for (service of getServicesList(listing.servicesOffered); track service.label) {
+        <span class="service-tag">
+            {{ service.icon }} {{ service.label }}
+        </span>
+        }
+    </div>
+
+    <div class="card-meta">
+      <span class="meta-item">
+        <span class="icon">👥</span>
+        {{ listing.peopleCapacity }} people
+      </span>
+      <span class="meta-item">
+        <span class="icon">🕐</span>
+        Updated {{ formatDate(listing.updatedAt) }}
+      </span>
+    </div>
+
+    <p class="description">{{ listing.description }}</p>
+  </div>
+
+  <div class="card-footer">
+    <button class="details-btn" (click)="onViewDetails()">View Details</button>
+  </div>
+</article>

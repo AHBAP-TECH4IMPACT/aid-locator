@@ -1,0 +1,16 @@
+<!-- location-list.component.html -->
+<section class="locations-section">
+  <div class="locations-header">
+    <h2>Locations List</h2>
+    <span class="location-count">{{ listings.length }} locations found</span>
+  </div>
+
+  <div class="locations-list">
+    @for( listing of listings; track listing.id) {
+        <app-location-card
+        [listing]="listing"
+        (viewDetails)="onViewDetails($event)">
+        </app-location-card>
+    }
+  </div>
+</section>
