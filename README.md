@@ -1,5 +1,4 @@
 # Aid Locator
-test
 A modern monorepo project containing an Angular 20 frontend and Spring Boot backend for locating aid resources.
 
 ## Project Structure
