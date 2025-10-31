@@ -191,18 +191,18 @@ The project includes automated CI/CD via GitHub Actions ([`.github/workflows/ci-
 ### Container Images
 Published images are tagged with:
 - `{branch-name}-{commit-sha}`
-- **Backend**: https://github.com/vishal6695/aid-locator/pkgs/container/aid-locator-backend
-- **Frontend**: https://github.com/vishal6695/aid-locator/pkgs/container/aid-locator-frontend
+- **Backend** [aid-locator-backend](https://github.com/AHBAP-TECH4IMPACT/aid-locator/pkgs/container/aid-locator-backend)
+- **Frontend**: [aid-locator-frontend](https://github.com/AHBAP-TECH4IMPACT/aid-locator/pkgs/container/aid-locator-frontend)
 
 ### Using CI-Built Images
 ```bash
 # Pull and run latest CI-built images
-docker pull ghcr.io/vishal6695/aid-locator-backend:develop-latest
-docker pull ghcr.io/vishal6695/aid-locator-frontend:develop-latest
+docker pull ghcr.io/ahbap-tech4impact/aid-locator-backend:develop-latest
+docker pull ghcr.io/ahbap-tech4impact/aid-locator-frontend:develop-latest
 
 # Run the containers
-docker run -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker ghcr.io/vishal6695/aid-locator-backend:develop-latest
-docker run -d -p 7200:80 ghcr.io/vishal6695/aid-locator-frontend:develop-latest
+docker run -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker ghcr.io/ahbap-tech4impact/aid-locator-backend:develop-latest
+docker run -d -p 7200:80 ghcr.io/ahbap-tech4impact/aid-locator-frontend:develop-latest
 ```
 
 ## Architecture

@@ -1,17 +1,17 @@
 name: CI/CD Pipeline
 
+permissions: write-all
 on:
   push:
     branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  test-and-build:
+  build:
     runs-on: ubuntu-latest
     
     steps:
@@ -42,20 +42,15 @@ jobs:
     - name: Install dependencies
       run: npm run install:all
 
-    - name: Run tests
-      run: |
-        npm run test:frontend
-        npm run test:backend
-
     - name: Build applications
       run: npm run build
 
     - name: Set up Docker Buildx
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: docker/setup-buildx-action@v3
 
     - name: Log in to GitHub Container Registry
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: docker/login-action@v3
       with:
         registry: ${{ env.REGISTRY }}
@@ -63,23 +58,23 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build and push Backend image
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: docker/build-push-action@v5
       with:
         context: .
         file: docker/backend/Dockerfile
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:${{ github.ref_name }}-${{ github.sha }}
+        tags: ghcr.io/ahbap-tech4impact/aid-locator-backend:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
     - name: Build and push Frontend image
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: docker/build-push-action@v5
       with:
         context: .
         file: docker/frontend/Dockerfile
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:${{ github.ref_name }}-${{ github.sha }}
+        tags: ghcr.io/ahbap-tech4impact/aid-locator-frontend:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max

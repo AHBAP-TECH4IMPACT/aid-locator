@@ -10,4 +10,13 @@ import { HeaderComponent } from './header/header';
 })
 export class App {
   protected readonly title = signal('aid-locator-frontend');
+  
+  healthResult: any = null;
+  healthError: string = '';
+  isLoading: boolean = false;
+  activeFilters: any[] = [];
+
+  checkHealth() {
+    console.log('Health check requested');
+  }
 }
