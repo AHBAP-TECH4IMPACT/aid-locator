@@ -15,6 +15,29 @@
   color: #333;
 }
 
+/* Accordion Icon */
+.accordion-icon {
+  transition: transform 0.3s ease;
+}
+
+.accordion-icon.rotated {
+  transform: rotate(-180deg);
+}
+
+/* Filter Content - Collapsible */
+.filter-content {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.filter-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin-bottom: 0 !important;
+}
+
 /* Filter Buttons */
 .filter-buttons {
   display: flex;
@@ -124,10 +147,49 @@
   margin-bottom: 0;
 }
 
+/* Mobile Map Toggle Button */
+.map-toggle-mobile {
+  display: none;
+}
+
+.map-view-container {
+  display: block;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-wrapper {
     padding: 1.5rem 0;
+  }
+  
+  /* Show toggle button on mobile */
+  .map-toggle-mobile {
+    display: block;
+  }
+  
+  .map-toggle-mobile .btn {
+    border-radius: 8px;
+    padding: 0.5rem 0.875rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .map-toggle-mobile .btn svg {
+    vertical-align: middle;
+  }
+  
+  /* Hide map by default on mobile */
+  .map-view-container {
+    display: none;
+  }
+  
+  /* Show map when toggle is active */
+  .map-view-container.mobile-visible {
+    display: block;
   }
   
   .filter-buttons {

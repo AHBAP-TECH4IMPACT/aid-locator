@@ -24,6 +24,12 @@ export class PublicDashboardComponent implements OnInit, OnDestroy {
   activeRadiusKm: number | null = null;
   userLocation: { lat: number; lng: number } | null = null;
   
+  // Mobile map view toggle
+  showMapViewOnMobile: boolean = false;
+  
+  // Filter accordion state
+  isFilterCollapsed: boolean = false;
+  
   // Locations data - loaded from API
   locations: AidListing[] = [];
   isLoadingListings: boolean = true;
@@ -238,6 +244,14 @@ export class PublicDashboardComponent implements OnInit, OnDestroy {
     }
 
     return filtered;
+  }
+
+  toggleMapView(): void {
+    this.showMapViewOnMobile = !this.showMapViewOnMobile;
+  }
+
+  toggleFilterAccordion(): void {
+    this.isFilterCollapsed = !this.isFilterCollapsed;
   }
 
   ngOnDestroy(): void {
