@@ -20,6 +20,7 @@ export class PublicListingDetailComponent implements OnInit {
   isPostingComment: boolean = false;
   feedbackError: string = '';
   feedbackSuccess: string = '';
+  showReportIssues: boolean = false;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -97,6 +98,16 @@ export class PublicListingDetailComponent implements OnInit {
 
   close(): void {
     this.activeModal.dismiss('close');
+  }
+
+  toggleReportIssues(): void {
+    this.showReportIssues = !this.showReportIssues;
+    // Clear any previous messages when toggling
+    if (!this.showReportIssues) {
+      this.feedbackError = '';
+      this.feedbackSuccess = '';
+      this.newComment = '';
+    }
   }
 
   reportIssue(): void {

@@ -129,6 +129,19 @@
   font-size: 0.95rem;
 }
 
+.location-link {
+  color: #2563eb;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.location-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
 .col-feedback {
   display: flex;
   flex-direction: column;

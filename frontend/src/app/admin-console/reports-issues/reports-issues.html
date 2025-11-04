@@ -31,7 +31,16 @@
     <div class="table-row" *ngFor="let report of reports">
       <div class="col-location">
         <span class="mobile-label">Location Name:</span>
-        <span class="location-name">{{ report.listingName || 'Not Available' }}</span>
+        <a 
+          *ngIf="report.listingId" 
+          href="javascript:void(0)" 
+          class="location-link"
+          (click)="viewListingDetails(report.listingId)">
+          {{ report.listingName || 'Not Available' }}
+        </a>
+        <span *ngIf="!report.listingId" class="location-name">
+          {{ report.listingName || 'Not Available' }}
+        </span>
       </div>
 
       <div class="col-feedback">

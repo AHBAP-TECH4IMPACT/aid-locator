@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPaginationModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FeedbackService } from '../../services/feedback.service';
-import { ListingFeedback } from '../../models/location.models';
+import { ListingService } from '../../services/listing.service';
+import { ListingFeedback, AidListing } from '../../models/location.models';
+import { ListingDetailsModalComponent } from '../../shared/listing-details-modal/listing-details-modal';
 
 interface FeedbackReport {
   id: number;
@@ -35,7 +37,11 @@ export class ReportsIssuesComponent implements OnInit {
   // Expose Math for template
   Math = Math;
 
-  constructor(private feedbackService: FeedbackService) {}
+  constructor(
+    private feedbackService: FeedbackService,
+    private listingService: ListingService,
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit(): void {
     this.loadReports();
@@ -77,6 +83,37 @@ export class ReportsIssuesComponent implements OnInit {
   onPageChange(page: number): void {
     this.page = page;
     this.refreshReports();
+  }
+
+  viewListingDetails(listingId: number | undefined): void {
+    if (!listingId) {
+      console.error('No listing ID available');
+      return;
+    }
+
+    this.isLoading = true;
+    this.listingService.getListingById(listingId).subscribe({
+      next: (listing: AidListing | null) => {
+        this.isLoading = false;
+        if (listing) {
+          const modalRef = this.modalService.open(ListingDetailsModalComponent, {
+            centered: true,
+            size: 'lg',
+            backdrop: 'static'
+          });
+          
+          modalRef.componentInstance.listing = listing;
+        } else {
+          console.error('Listing not found');
+          this.errorMessage = 'Listing not found';
+        }
+      },
+      error: (error) => {
+        console.error('Error loading listing:', error);
+        this.errorMessage = 'Failed to load listing details';
+        this.isLoading = false;
+      }
+    });
   }
 
   viewReport(report: FeedbackReport): void {

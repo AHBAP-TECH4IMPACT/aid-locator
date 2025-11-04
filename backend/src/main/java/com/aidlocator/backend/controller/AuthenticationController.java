@@ -45,7 +45,7 @@ public class AuthenticationController {
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 		if (authenticatedUser != null) {
-			if(AidConstants.APPROVED.equalsIgnoreCase(authenticatedUser.getStatus())) {
+			// if(AidConstants.APPROVED.equalsIgnoreCase(authenticatedUser.getStatus())) {
 			String jwtToken = jwtService.generateToken(authenticatedUser);
 			refreshTokenService.createRefreshToken(jwtToken, jwtService.getExpirationTime(), authenticatedUser);
 			LoginResponse loginResponse = new LoginResponse().setToken(jwtToken)
@@ -53,10 +53,10 @@ public class AuthenticationController {
 
 			loginResponse.setUser(authenticatedUser);
 			return ResponseEntity.ok(loginResponse);
-			}
-			LoginResponse errorResponse = new LoginResponse();
-			errorResponse.setError("Your login approval is pending, Please reach out to Admin for approval");
-			return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
+			// }
+			// LoginResponse errorResponse = new LoginResponse();
+			// errorResponse.setError("Your login approval is pending, Please reach out to Admin for approval");
+			// return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
 		}
 		
 		else {

@@ -5,6 +5,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { AidListing } from '../../models/location.models';
 import { ProviderListingService, ListingDto } from '../../services/provider-listing.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-listing-modal',
@@ -20,7 +21,7 @@ export class ListingModalComponent implements OnInit {
   listingForm!: FormGroup;
   isLoading: boolean = false;
   errorMessage: string = '';
-  useMapPicker: boolean = false;
+  useDifferentContact: boolean = false;
 
   // Map configuration
   mapCenter: { lat: number; lng: number } = { lat: 40.7128, lng: -74.0060 }; // Default to NYC
@@ -56,7 +57,8 @@ export class ListingModalComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
-    private providerListingService: ProviderListingService
+    private providerListingService: ProviderListingService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -100,6 +102,29 @@ export class ListingModalComponent implements OnInit {
     // Get selected services from locationData if in edit mode
     const selectedServices = this.locationData?.services || [];
 
+    // Get logged-in user's details
+    const currentUser = this.authService.getUser();
+    
+    // Determine if we should use different contact
+    // In edit mode, check if contact details differ from user's details
+    if (this.mode === 'edit' && this.locationData) {
+      this.useDifferentContact = 
+        this.locationData.contactPerson !== currentUser?.name ||
+        this.locationData.contactPhone !== currentUser?.phone ||
+        this.locationData.contactEmail !== currentUser?.email;
+    }
+
+    // Set default contact values based on useDifferentContact flag
+    const defaultContactPerson = this.useDifferentContact 
+      ? (this.locationData?.contactPerson || '')
+      : (currentUser?.name || '');
+    const defaultContactPhone = this.useDifferentContact 
+      ? (this.locationData?.contactPhone || '')
+      : (currentUser?.phone || '');
+    const defaultContactEmail = this.useDifferentContact 
+      ? (this.locationData?.contactEmail || '')
+      : (currentUser?.email || '');
+
     this.listingForm = this.fb.group({
       name: [this.locationData?.name || '', [Validators.required, Validators.minLength(3)]],
       address: [this.locationData?.address || '', [Validators.required, Validators.minLength(5)]],
@@ -108,12 +133,19 @@ export class ListingModalComponent implements OnInit {
       capacity: [this.locationData?.capacity || '', [Validators.required]],
       status: [this.locationData?.status || 'open', [Validators.required]],
       description: [this.locationData?.description || '', [Validators.required, Validators.minLength(10)]],
-      contactPerson: [this.locationData?.contactPerson || '', [Validators.required]],
-      contactPhone: [this.locationData?.contactPhone || '', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      contactEmail: [this.locationData?.contactEmail || '', [Validators.required, Validators.email]],
+      contactPerson: [defaultContactPerson, [Validators.required]],
+      contactPhone: [defaultContactPhone, [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
+      contactEmail: [defaultContactEmail, [Validators.required, Validators.email]],
       services: [selectedServices],
       pin: [false]
     });
+
+    // Disable contact fields if not using different contact
+    if (!this.useDifferentContact) {
+      this.listingForm.get('contactPerson')?.disable();
+      this.listingForm.get('contactPhone')?.disable();
+      this.listingForm.get('contactEmail')?.disable();
+    }
 
     // Initialize map marker if editing with existing coordinates
     if (this.locationData?.latitude && this.locationData?.longitude) {
@@ -123,25 +155,40 @@ export class ListingModalComponent implements OnInit {
         this.markerPosition = { lat, lng };
         this.mapCenter = { lat, lng };
       }
+    } else {
+      // For new listings, set initial marker at map center
+      this.markerPosition = { ...this.mapCenter };
+      this.updateFormCoordinates(this.mapCenter.lat, this.mapCenter.lng);
     }
   }
 
-  toggleMapPicker(event: any): void {
-    this.useMapPicker = event.target.checked;
+  toggleDifferentContact(event: any): void {
+    this.useDifferentContact = event.target.checked;
+    const currentUser = this.authService.getUser();
     
-    if (this.useMapPicker) {
-      // If switching to map picker, try to use existing lat/lng values
-      const lat = parseFloat(this.listingForm.get('latitude')?.value);
-      const lng = parseFloat(this.listingForm.get('longitude')?.value);
+    if (this.useDifferentContact) {
+      // Enable contact fields for editing
+      this.listingForm.get('contactPerson')?.enable();
+      this.listingForm.get('contactPhone')?.enable();
+      this.listingForm.get('contactEmail')?.enable();
       
-      if (!isNaN(lat) && !isNaN(lng)) {
-        this.markerPosition = { lat, lng };
-        this.mapCenter = { lat, lng };
-      } else {
-        // Use current map center as marker position
-        this.markerPosition = { ...this.mapCenter };
-        this.updateFormCoordinates(this.mapCenter.lat, this.mapCenter.lng);
-      }
+      // Clear the fields to allow user to enter new values
+      this.listingForm.patchValue({
+        contactPerson: '',
+        contactPhone: '',
+        contactEmail: ''
+      });
+    } else {
+      // Disable contact fields and populate with logged-in user's details
+      this.listingForm.patchValue({
+        contactPerson: currentUser?.name || '',
+        contactPhone: currentUser?.phone || '',
+        contactEmail: currentUser?.email || ''
+      });
+      
+      this.listingForm.get('contactPerson')?.disable();
+      this.listingForm.get('contactPhone')?.disable();
+      this.listingForm.get('contactEmail')?.disable();
     }
   }
 
@@ -201,7 +248,8 @@ export class ListingModalComponent implements OnInit {
       this.isLoading = true;
       this.errorMessage = '';
 
-      const formValue = this.listingForm.value;
+      // Use getRawValue() to include disabled fields
+      const formValue = this.listingForm.getRawValue();
 
       const listingDto: ListingDto = {
         id: this.mode === 'edit' ? this.locationData?.id : undefined,

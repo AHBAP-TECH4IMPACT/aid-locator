@@ -48,60 +48,8 @@
       </div>
     </div>
 
-    <!-- Map Picker Checkbox -->
-    <div class="form-group">
-      <div class="form-check">
-        <input
-          type="checkbox"
-          id="useMapPicker"
-          class="form-check-input"
-          [(ngModel)]="useMapPicker"
-          [ngModelOptions]="{standalone: true}"
-          (change)="toggleMapPicker($event)"
-        />
-        <label class="form-check-label" for="useMapPicker">
-          Set location on map
-        </label>
-      </div>
-    </div>
-
-    <!-- Latitude and Longitude Row (Shown when map picker is NOT used) -->
-    <div class="form-row" *ngIf="!useMapPicker">
-      <div class="form-group form-group-half">
-        <label for="latitude" class="form-label required">Latitude</label>
-        <input
-          type="text"
-          id="latitude"
-          class="form-control"
-          formControlName="latitude"
-          placeholder="e.g., 40.7128"
-          [class.is-invalid]="listingForm.get('latitude')?.invalid && listingForm.get('latitude')?.touched"
-        />
-        <div class="invalid-feedback" *ngIf="listingForm.get('latitude')?.invalid && listingForm.get('latitude')?.touched">
-          <span *ngIf="listingForm.get('latitude')?.errors?.['required']">Latitude is required.</span>
-          <span *ngIf="listingForm.get('latitude')?.errors?.['pattern']">Enter valid latitude (-90 to 90).</span>
-        </div>
-      </div>
-
-      <div class="form-group form-group-half">
-        <label for="longitude" class="form-label required">Longitude</label>
-        <input
-          type="text"
-          id="longitude"
-          class="form-control"
-          formControlName="longitude"
-          placeholder="e.g., -74.0060"
-          [class.is-invalid]="listingForm.get('longitude')?.invalid && listingForm.get('longitude')?.touched"
-        />
-        <div class="invalid-feedback" *ngIf="listingForm.get('longitude')?.invalid && listingForm.get('longitude')?.touched">
-          <span *ngIf="listingForm.get('longitude')?.errors?.['required']">Longitude is required.</span>
-          <span *ngIf="listingForm.get('longitude')?.errors?.['pattern']">Enter valid longitude (-180 to 180).</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Google Maps Component (Shown when map picker is used) -->
-    <div class="form-group map-picker-container" *ngIf="useMapPicker">
+    <!-- Google Maps Component -->
+    <div class="form-group map-picker-container">
       <label class="form-label">Click on the map to set location</label>
       <div class="map-wrapper">
         <google-map
@@ -190,6 +138,23 @@
       <div class="invalid-feedback" *ngIf="listingForm.get('description')?.invalid && listingForm.get('description')?.touched">
         <span *ngIf="listingForm.get('description')?.errors?.['required']">Description is required.</span>
         <span *ngIf="listingForm.get('description')?.errors?.['minlength']">Description must be at least 10 characters.</span>
+      </div>
+    </div>
+
+    <!-- Different Contact Checkbox -->
+    <div class="form-group">
+      <div class="form-check">
+        <input
+          type="checkbox"
+          id="useDifferentContact"
+          class="form-check-input"
+          [(ngModel)]="useDifferentContact"
+          [ngModelOptions]="{standalone: true}"
+          (change)="toggleDifferentContact($event)"
+        />
+        <label class="form-check-label" for="useDifferentContact">
+          Add different contact
+        </label>
       </div>
     </div>
 

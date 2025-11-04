@@ -62,6 +62,20 @@ export class ListingService {
   }
 
   /**
+   * Get a single listing by ID (Admin only)
+   */
+  getListingById(id: number): Observable<AidListing | null> {
+    return this.http.get<ListingResponse[]>(`${this.apiUrl}/listingsReview`)
+      .pipe(
+        map(responses => {
+          const listing = responses.find(r => r.id === id);
+          return listing ? this.mapToAidListing(listing) : null;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
    * Map backend response to AidListing format
    */
   private mapToAidListing(response: ListingResponse): AidListing {
